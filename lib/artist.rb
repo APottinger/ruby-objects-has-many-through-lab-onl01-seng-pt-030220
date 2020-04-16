@@ -1,28 +1,35 @@
-class Artist 
+require_relative "song"
+require 'pry'
 
-  attr_accessor :name
+class Artist
+
   @@all = []
-
-  def initialize(name)
-    @name = name
-    @@all << self
-  end
-
-  def songs
-    Song.all.select {|song| song.artist == self}
-  end
-
-  def genres
-    songs.map {|song| song.genre}
-  end
 
   def self.all
     @@all
   end
 
-  def new_song(song, genre)
-    Song.new(name, self, genre)
+  attr_accessor :name
+
+  def initialize(name)
+    @name = name
+    @genres = []
+    @@all << self
   end
 
+  def new_song(name, genre)
+    song = Song.new(name, self, genre)
+    genre.artists << self
+    genre.songs << song
+    song
+  end
 
-end 
+  def songs
+    Song.all.select{|song| song.artist == self }
+  end
+
+  def genres
+    Genre.all.select{|genre| genre.artists.include?(self)}
+  end
+
+end
